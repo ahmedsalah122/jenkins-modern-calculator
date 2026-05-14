@@ -5,26 +5,44 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                 checkout scm
+                checkout scm
             }
-        }   
+        }
 
-        stage('Build') {
+        stage('Setup Virtual Environment') {
             steps {
-                sh 'python3 -m pip install --upgrade pip'
-                sh 'pip3 install -r requirements.txt || true'
+                sh '''
+                python3 -m venv venv
+                . venv/bin/activate
+                python -m pip install --upgrade pip
+                '''
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh '''
+                . venv/bin/activate
+                pip install -r requirements.txt || true
+                '''
             }
         }
 
         stage('Test') {
             steps {
-                sh 'python3 -m py_compile *.py'
+                sh '''
+                . venv/bin/activate
+                python -m py_compile *.py
+                '''
             }
         }
 
         stage('Deploy') {
             steps {
-                sh 'nohup python3 main.py > output.log 2>&1 &'
+                sh '''
+                . venv/bin/activate
+                nohup python main.py > output.log 2>&1 &
+                '''
             }
         }
     }
