@@ -5,9 +5,9 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/ahmedsalah122/jenkins-modern-calculator.git'
+                 checkout scm
             }
-        }
+        }   
 
         stage('Build') {
             steps {
